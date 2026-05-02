@@ -1,0 +1,18 @@
+import Sidebar from '../components/Sidebar.jsx'
+
+function MainLayout({ children }) {
+  return (
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="topbar__brand">HAIBAZO BOOK REVIEW</div>
+      </header>
+
+      <div className="app-shell__body">
+        <Sidebar />
+        <main className="content">{children}</main>
+      </div>
+    </div>
+  )
+}
+
+export default MainLayout
