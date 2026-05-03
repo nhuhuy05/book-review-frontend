@@ -1,59 +1,44 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
+import axios from 'axios';
 
-async function request(path, options = {}) {
-  const headers = {
-    ...(options.headers ?? {}),
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
   }
+});
 
-  if (options.body && !headers['Content-Type']) {
-    headers['Content-Type'] = 'application/json'
-  }
-
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers,
-  })
-
-  if (!response.ok) {
-    let message = 'Request failed.'
-
-    try {
-      const payload = await response.json()
-      message = payload.message || payload.error || message
-    } catch {
-      message = `${response.status} ${response.statusText}`.trim()
+api.interceptors.response.use(
+  (response) => {
+    if (response.status === 204) {
+      return null;
     }
-
-    throw new Error(message)
+    return response.data;
+  },
+  (error) => {
+    let message = 'Request failed.';
+    if (error.response) {
+      message = error.response.data?.message || error.response.data?.error || `${error.response.status} ${error.response.statusText}`.trim();
+    } else if (error.message) {
+      message = error.message;
+    }
+    return Promise.reject(new Error(message));
   }
-
-  if (response.status === 204) {
-    return null
-  }
-
-  return response.json()
-}
+);
 
 export function get(path) {
-  return request(path)
+  return api.get(path);
 }
 
 export function post(path, body) {
-  return request(path, {
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
+  return api.post(path, body);
 }
 
 export function put(path, body) {
-  return request(path, {
-    method: 'PUT',
-    body: JSON.stringify(body),
-  })
+  return api.put(path, body);
 }
 
 export function remove(path) {
-  return request(path, {
-    method: 'DELETE',
-  })
+  return api.delete(path);
 }
