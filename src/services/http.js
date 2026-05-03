@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/book-review'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 async function request(path, options = {}) {
   const headers = {
