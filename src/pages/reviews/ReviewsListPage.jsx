@@ -93,7 +93,7 @@ function ReviewsListPage() {
                 <td>{(currentPage - 1) * PAGE_SIZE + index + 1}</td>
                 <td>{review.bookName}</td>
                 <td>{review.authorName}</td>
-                <td>{review.review}</td>
+                <td className="data-table__cell--long">{review.review}</td>
                 <td className="data-table__actions">
                   <div className="action-group">
                     <Button onClick={() => navigate(`/reviews/${review.id}/edit`)} variant="secondary">
