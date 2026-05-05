@@ -43,7 +43,7 @@ function BookEditPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Books > Edit" subtitle="Update an existing book." />
+      <PageHeader title="Books > Edit" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading book..." />

@@ -34,7 +34,7 @@ function BookCreatePage() {
 
   return (
     <section className="page">
-      <PageHeader title="Books > Create" subtitle="Create a book and link it to an author." />
+      <PageHeader title="Books > Create" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading authors..." />

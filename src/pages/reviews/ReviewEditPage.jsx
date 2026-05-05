@@ -43,7 +43,7 @@ function ReviewEditPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Reviews > Edit" subtitle="Update an existing review." />
+      <PageHeader title="Reviews > Edit" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading review..." />

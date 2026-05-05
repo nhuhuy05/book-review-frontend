@@ -79,7 +79,7 @@ function ReviewsListPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Reviews > List" subtitle="See book reviews across all authors." />
+      <PageHeader title="Reviews > List" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading reviews..." />

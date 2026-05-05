@@ -1,6 +1,6 @@
 # Haibazo Book Review Frontend
 
-Frontend cho bài toán quản lý tác giả, sách và review sách. Dự án được xây bằng React + Vite, dùng custom client-side router và gọi REST API để thực hiện các thao tác CRUD.
+Frontend cho bài toán quản lý tác giả, sách và review sách. Dự án được xây dựng bằng React + Vite, dùng custom client-side router và gọi REST API bằng Axios để thực hiện các thao tác CRUD.
 
 ## Tổng quan
 
@@ -22,8 +22,8 @@ Ràng buộc nghiệp vụ hiện tại ở frontend:
 - React 19
 - Vite 6
 - JavaScript (ES Modules)
+- Axios
 - ESLint 9
-- Fetch API
 
 ## Cấu trúc thư mục
 
@@ -59,15 +59,15 @@ Route `/` hiện trỏ về danh sách tác giả.
 Base URL được đọc từ biến môi trường:
 
 ```env
-VITE_API_BASE_URL=/book-review
+VITE_API_BASE_URL=/api
 ```
 
-Nếu không khai báo, frontend sẽ mặc định gọi API đến prefix `/book-review`.
+Nếu không khai báo, frontend mặc định gọi API qua prefix `/api`. Trong môi trường development, Vite proxy prefix này đến backend được cấu hình trong `vite.config.js`.
 
-Ví dụ file `.env.local`:
+Ví dụ file `.env.local` khi chạy với backend local:
 
 ```env
-VITE_API_BASE_URL=http://localhost:8080/book-review
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 Frontend hiện đang gọi các endpoint:

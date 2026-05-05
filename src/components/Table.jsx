@@ -19,7 +19,7 @@ function Table({ columns, rows, renderRow, emptyText = 'No data found.' }) {
             <>
               {rows.map(renderRow)}
               {Array.from({ length: emptyRows }).map((_, index) => (
-                <tr key={`empty-${index}`} className="data-table__empty-row">
+                <tr key={`empty-${index}`}>
                   {columns.map((col) => (
                     <td key={col.key}>&nbsp;</td>
                   ))}
@@ -29,7 +29,7 @@ function Table({ columns, rows, renderRow, emptyText = 'No data found.' }) {
           ) : (
             <>
               {Array.from({ length: MIN_ROWS }).map((_, index) => (
-                <tr key={`empty-${index}`} className="data-table__empty-row">
+                <tr key={`empty-${index}`}>
                   {index === 2 ? (
                     <td colSpan={columns.length} style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>
                       {emptyText}

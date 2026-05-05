@@ -34,7 +34,7 @@ function ReviewCreatePage() {
 
   return (
     <section className="page">
-      <PageHeader title="Reviews > Create" subtitle="Write a review for an existing book." />
+      <PageHeader title="Reviews > Create" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading books..." />

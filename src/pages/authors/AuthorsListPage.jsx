@@ -90,7 +90,7 @@ function AuthorsListPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Authors > List" subtitle="Manage authors and see how many books each author has." />
+      <PageHeader title="Authors > List" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading authors..." />

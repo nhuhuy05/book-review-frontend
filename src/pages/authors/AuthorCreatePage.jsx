@@ -26,7 +26,7 @@ function AuthorCreatePage() {
 
   return (
     <section className="page">
-      <PageHeader title="Authors > Create" subtitle="Create a new author record." />
+      <PageHeader title="Authors > Create" />
       <AuthorForm
         initialValues={{ name: '' }}
         onSubmit={onSubmit}

@@ -89,7 +89,7 @@ function BooksListPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Books > List" subtitle="Browse books and their authors." />
+      <PageHeader title="Books > List" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading books..." />

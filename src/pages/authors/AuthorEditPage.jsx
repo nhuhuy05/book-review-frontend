@@ -32,7 +32,7 @@ function AuthorEditPage() {
 
   return (
     <section className="page">
-      <PageHeader title="Authors > Edit" subtitle="Update an existing author." />
+      <PageHeader title="Authors > Edit" />
       <ErrorMessage message={error} />
       {loading ? (
         <Loading text="Loading author..." />
