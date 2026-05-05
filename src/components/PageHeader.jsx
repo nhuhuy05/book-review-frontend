@@ -1,8 +1,7 @@
-function PageHeader({ title, subtitle }) {
+function PageHeader({ title }) {
   return (
     <div className="page-header">
       <h1 className="page-header__title">{title}</h1>
-      {subtitle ? <p className="page-header__subtitle">{subtitle}</p> : null}
     </div>
   )
 }
