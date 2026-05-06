@@ -1,0 +1,35 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-6);
+  z-index: 1000;
+}
+.dialog {
+  width: min(100%, 400px);
+  background: var(--canvas);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--sp-8);
+}
+.dialog__title {
+  margin: 0 0 var(--sp-2);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.dialog__message {
+  margin: 0 0 var(--sp-6);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 14px;
+}
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}

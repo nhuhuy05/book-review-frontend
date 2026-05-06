@@ -16,7 +16,15 @@ function useFetch(fetcher) {
         const result = await fetcher()
 
         if (active) {
-          setData(result)
+          if (result && result.success !== undefined) {
+            if (result.success) {
+              setData(result.data || null)
+            } else {
+              setError(result.message || 'Something went wrong.')
+            }
+          } else {
+            setData(result) // Fallback for APIs not wrapped in ApiResponse
+          }
         }
       } catch (err) {
         if (active) {

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import './Form.css';
 import Button from './Button.jsx'
 import ErrorMessage from './ErrorMessage.jsx'
 import Input from './Input.jsx'
@@ -6,21 +6,8 @@ import Select from './Select.jsx'
 import useForm from '../hooks/useForm.js'
 import { validateBook } from '../utils/validation.js'
 
-function BookForm({
-  initialValues,
-  onSubmit,
-  submitLabel,
-  submitting,
-  submitError,
-  authors,
-  disabled = false,
-  emptyMessage,
-}) {
-  const { values, errors, handleChange, handleSubmit, setValues } = useForm(initialValues, validateBook)
-
-  useEffect(() => {
-    setValues(initialValues)
-  }, [initialValues, setValues])
+function BookForm({ initialValues, onSubmit, submitLabel, authors, disabled = false, emptyMessage }) {
+  const { values, errors, submitting, submitError, handleChange, handleSubmit } = useForm(initialValues, validateBook)
 
   return (
     <form className="form-card" onSubmit={handleSubmit(onSubmit)}>

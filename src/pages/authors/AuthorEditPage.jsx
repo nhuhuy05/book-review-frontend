@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import AuthorForm from '../../components/AuthorForm.jsx'
 import ErrorMessage from '../../components/ErrorMessage.jsx'
 import Loading from '../../components/Loading.jsx'
@@ -8,26 +8,16 @@ import { getRouteParams, navigate } from '../../router/navigation.js'
 import authorService from '../../services/authorService.js'
 
 function AuthorEditPage() {
-  const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
   const authorId = useMemo(() => getRouteParams('/authors/:id/edit')?.id, [])
   const loadAuthor = useCallback(() => authorService.getById(authorId), [authorId])
   const { data, loading, error } = useFetch(loadAuthor)
+  const initialValues = useMemo(() => ({ name: data?.name ?? '' }), [data])
 
   async function onSubmit(formValues) {
-    setSubmitting(true)
-    setSubmitError('')
-
-    try {
-      await authorService.update(authorId, {
-        name: formValues.name.trim(),
-      })
-      navigate('/authors')
-    } catch (submitErrorValue) {
-      setSubmitError(submitErrorValue.message || 'Could not update author.')
-    } finally {
-      setSubmitting(false)
-    }
+    await authorService.update(authorId, {
+      name: formValues.name.trim(),
+    })
+    navigate('/authors')
   }
 
   return (
@@ -38,11 +28,9 @@ function AuthorEditPage() {
         <Loading text="Loading author..." />
       ) : error ? null : (
         <AuthorForm
-          initialValues={{ name: data?.name ?? '' }}
+          initialValues={initialValues}
           onSubmit={onSubmit}
-          submitError={submitError}
           submitLabel="Update"
-          submitting={submitting}
         />
       )}
     </section>

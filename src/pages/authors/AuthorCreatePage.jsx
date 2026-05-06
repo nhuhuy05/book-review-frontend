@@ -1,38 +1,25 @@
-import { useState } from 'react'
 import AuthorForm from '../../components/AuthorForm.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import { navigate } from '../../router/navigation.js'
 import authorService from '../../services/authorService.js'
 
+const EMPTY_AUTHOR_VALUES = { name: '' }
+
 function AuthorCreatePage() {
-  const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-
   async function onSubmit(formValues) {
-    setSubmitting(true)
-    setSubmitError('')
-
-    try {
-      await authorService.create({
-        name: formValues.name.trim(),
-      })
-      navigate('/authors')
-    } catch (error) {
-      setSubmitError(error.message || 'Could not create author.')
-    } finally {
-      setSubmitting(false)
-    }
+    await authorService.create({
+      name: formValues.name.trim(),
+    })
+    navigate('/authors')
   }
 
   return (
     <section className="page">
       <PageHeader title="Authors > Create" />
       <AuthorForm
-        initialValues={{ name: '' }}
+        initialValues={EMPTY_AUTHOR_VALUES}
         onSubmit={onSubmit}
-        submitError={submitError}
         submitLabel="Create"
-        submitting={submitting}
       />
     </section>
   )

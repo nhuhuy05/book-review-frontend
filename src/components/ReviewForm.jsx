@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import './Form.css';
 import Button from './Button.jsx'
 import ErrorMessage from './ErrorMessage.jsx'
 import Select from './Select.jsx'
@@ -6,21 +6,8 @@ import Textarea from './Textarea.jsx'
 import useForm from '../hooks/useForm.js'
 import { validateReview } from '../utils/validation.js'
 
-function ReviewForm({
-  initialValues,
-  onSubmit,
-  submitLabel,
-  submitting,
-  submitError,
-  books,
-  disabled = false,
-  emptyMessage,
-}) {
-  const { values, errors, handleChange, handleSubmit, setValues } = useForm(initialValues, validateReview)
-
-  useEffect(() => {
-    setValues(initialValues)
-  }, [initialValues, setValues])
+function ReviewForm({ initialValues, onSubmit, submitLabel, books, disabled = false, emptyMessage }) {
+  const { values, errors, submitting, submitError, handleChange, handleSubmit } = useForm(initialValues, validateReview)
 
   return (
     <form className="form-card" onSubmit={handleSubmit(onSubmit)}>

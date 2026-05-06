@@ -1,3 +1,4 @@
+import './MainLayout.css';
 import Sidebar from '../components/Sidebar.jsx'
 
 function MainLayout({ children }) {

@@ -1,0 +1,12 @@
+.alert {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-4);
+  font-size: 13px;
+  font-weight: 500;
+}
+.alert--error {
+  background: var(--danger-soft);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}

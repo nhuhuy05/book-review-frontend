@@ -1,15 +1,15 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import Button from '../../components/Button.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog.jsx'
 import ErrorMessage from '../../components/ErrorMessage.jsx'
+import { DeleteIcon, EditIcon } from '../../components/icons.jsx'
 import Loading from '../../components/Loading.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
 import Pagination from '../../components/Pagination.jsx'
 import Table from '../../components/Table.jsx'
-import useFetch from '../../hooks/useFetch.js'
+import usePaginatedList from '../../hooks/usePaginatedList.js'
 import { navigate } from '../../router/navigation.js'
 import reviewService from '../../services/reviewService.js'
-import { getSafePageAfterDelete, getTotalPages, paginate } from '../../utils/helpers.js'
 
 const columns = [
   { key: 'number', label: 'No' },
@@ -22,101 +22,67 @@ const columns = [
 const PAGE_SIZE = 5
 
 function ReviewsListPage() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [dialogState, setDialogState] = useState({
-    open: false,
-    review: null,
-    loading: false,
-    error: '',
-  })
-  const loadReviews = useCallback(() => reviewService.getAll(), [])
-  const { data, loading, error, setData } = useFetch(loadReviews)
-  const totalPages = useMemo(() => getTotalPages(data, PAGE_SIZE), [data])
-  const currentRows = useMemo(() => paginate(data, currentPage, PAGE_SIZE), [currentPage, data])
-
-  function closeDialog() {
-    setDialogState({
-      open: false,
-      review: null,
-      loading: false,
-      error: '',
-    })
-  }
-
-  function openDeleteDialog(review) {
-    setDialogState({
-      open: true,
-      review,
-      loading: false,
-      error: '',
-    })
-  }
+  const loadReviews = useCallback(async (page, size) => {
+    return await reviewService.getAll(page, size)
+  }, [])
+  const list = usePaginatedList(loadReviews, PAGE_SIZE)
 
   async function handleDeleteConfirm() {
-    if (!dialogState.review) {
+    if (!list.deleteItem) {
       return
     }
 
-    setDialogState((current) => ({
-      ...current,
-      loading: true,
-      error: '',
-    }))
+    list.startDelete()
 
     try {
-      await reviewService.remove(dialogState.review.id)
-      setData((current) => current.filter((review) => review.id !== dialogState.review.id))
-      setCurrentPage((page) => getSafePageAfterDelete(data.length, page, PAGE_SIZE))
-      closeDialog()
+      await reviewService.remove(list.deleteItem.id)
+      list.removeItem(list.deleteItem.id)
+      list.closeDelete()
     } catch (deleteError) {
-      setDialogState((current) => ({
-        ...current,
-        loading: false,
-        error: deleteError.message || 'Could not delete review.',
-      }))
+      list.failDelete(deleteError.message || 'Could not delete review.')
     }
   }
 
   return (
     <section className="page">
       <PageHeader title="Reviews > List" />
-      <ErrorMessage message={error} />
-      {loading ? (
+      <ErrorMessage message={list.error} />
+      {list.loading ? (
         <Loading text="Loading reviews..." />
       ) : (
         <>
           <Table
             columns={columns}
-            rows={currentRows}
+            rows={list.currentRows}
             renderRow={(review, index) => (
               <tr key={review.id}>
-                <td>{(currentPage - 1) * PAGE_SIZE + index + 1}</td>
+                <td>{(list.currentPage - 1) * PAGE_SIZE + index + 1}</td>
                 <td>{review.bookName}</td>
                 <td>{review.authorName}</td>
                 <td className="data-table__cell--long">{review.review}</td>
                 <td className="data-table__actions">
                   <div className="action-group">
                     <Button onClick={() => navigate(`/reviews/${review.id}/edit`)} variant="secondary">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg> Edit
+                      {EditIcon} Edit
                     </Button>
-                    <Button onClick={() => openDeleteDialog(review)} variant="danger">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> Delete
+                    <Button onClick={() => list.openDelete(review)} variant="danger">
+                      {DeleteIcon} Delete
                     </Button>
                   </div>
                 </td>
               </tr>
             )}
           />
-          <Pagination currentPage={currentPage} onPageChange={setCurrentPage} totalPages={totalPages} />
+          <Pagination currentPage={list.currentPage} onPageChange={list.setCurrentPage} totalPages={list.totalPages} />
         </>
       )}
       <ConfirmDialog
-        error={dialogState.error}
-        loading={dialogState.loading}
-        message={`Delete the review for ${dialogState.review?.bookName ?? 'this book'} permanently?`}
-        onCancel={closeDialog}
+        error={list.deleteError}
+        loading={list.deleteLoading}
+        message={`Delete the review for ${list.deleteItem?.bookName ?? 'this book'} permanently?`}
+        onCancel={list.closeDelete}
         onConfirm={handleDeleteConfirm}
-        open={dialogState.open}
+        open={Boolean(list.deleteItem)}
         title="Delete review"
       />
     </section>

@@ -1,6 +1,7 @@
+import './Table.css';
 function Table({ columns, rows, renderRow, emptyText = 'No data found.' }) {
-  const MIN_ROWS = 5;
-  const emptyRows = Math.max(0, MIN_ROWS - rows.length);
+  const MIN_ROWS = 5
+  const emptyRows = Math.max(0, MIN_ROWS - rows.length)
 
   return (
     <div className="table-card">
@@ -8,7 +9,7 @@ function Table({ columns, rows, renderRow, emptyText = 'No data found.' }) {
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} className={column.key === 'actions' ? 'data-table__actions' : ''}>
+              <th className={column.key === 'actions' ? 'data-table__actions' : ''} key={column.key} scope="col">
                 {column.label}
               </th>
             ))}

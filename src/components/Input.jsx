@@ -1,3 +1,4 @@
+import './Form.css';
 function Input({ label, error, ...props }) {
   return (
     <label className="field">

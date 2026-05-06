@@ -18,12 +18,16 @@ api.interceptors.response.use(
   },
   (error) => {
     let message = 'Request failed.';
+    let fieldErrors = {};
     if (error.response) {
       message = error.response.data?.message || error.response.data?.error || `${error.response.status} ${error.response.statusText}`.trim();
+      fieldErrors = error.response.data?.fieldErrors || {};
     } else if (error.message) {
       message = error.message;
     }
-    return Promise.reject(new Error(message));
+    const err = new Error(message);
+    err.fieldErrors = fieldErrors;
+    return Promise.reject(err);
   }
 );
 

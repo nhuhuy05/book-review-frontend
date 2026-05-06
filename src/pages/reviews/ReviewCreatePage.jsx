@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import ErrorMessage from '../../components/ErrorMessage.jsx'
 import Loading from '../../components/Loading.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
@@ -8,28 +8,19 @@ import { navigate } from '../../router/navigation.js'
 import bookService from '../../services/bookService.js'
 import reviewService from '../../services/reviewService.js'
 
+const EMPTY_REVIEW_VALUES = { bookId: '', review: '' }
+
 function ReviewCreatePage() {
-  const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const loadBooks = useCallback(() => bookService.getAll(), [])
+  const loadBooks = useCallback(() => bookService.getAll(0, 1000), [])
   const { data: books, loading, error } = useFetch(loadBooks)
-  const hasBooks = useMemo(() => books.length > 0, [books])
+  const hasBooks = books.length > 0
 
   async function onSubmit(formValues) {
-    setSubmitting(true)
-    setSubmitError('')
-
-    try {
-      await reviewService.create({
-        bookId: Number(formValues.bookId),
-        review: formValues.review.trim(),
-      })
-      navigate('/reviews')
-    } catch (submitErrorValue) {
-      setSubmitError(submitErrorValue.message || 'Could not create review.')
-    } finally {
-      setSubmitting(false)
-    }
+    await reviewService.create({
+      bookId: Number(formValues.bookId),
+      review: formValues.review.trim(),
+    })
+    navigate('/reviews')
   }
 
   return (
@@ -43,11 +34,9 @@ function ReviewCreatePage() {
           books={books}
           disabled={!hasBooks}
           emptyMessage={!hasBooks ? 'Create a book first before creating a review.' : ''}
-          initialValues={{ bookId: '', review: '' }}
+          initialValues={EMPTY_REVIEW_VALUES}
           onSubmit={onSubmit}
-          submitError={submitError}
           submitLabel="Create"
-          submitting={submitting}
         />
       )}
     </section>

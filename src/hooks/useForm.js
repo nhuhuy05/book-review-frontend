@@ -1,8 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function useForm(initialValues, validate) {
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+
+  useEffect(() => {
+    setValues(initialValues)
+    setErrors({})
+    setSubmitError('')
+  }, [initialValues])
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -29,15 +37,27 @@ function useForm(initialValues, validate) {
         return
       }
 
-      await onSubmit(values)
+      setSubmitting(true)
+      setSubmitError('')
+
+      try {
+        await onSubmit(values)
+      } catch (err) {
+        setSubmitError(err.message || 'Something went wrong.')
+        if (err.fieldErrors && Object.keys(err.fieldErrors).length > 0) {
+          setErrors((current) => ({ ...current, ...err.fieldErrors }))
+        }
+      } finally {
+        setSubmitting(false)
+      }
     }
   }
 
   return {
     values,
     errors,
-    setErrors,
-    setValues,
+    submitting,
+    submitError,
     handleChange,
     handleSubmit,
   }

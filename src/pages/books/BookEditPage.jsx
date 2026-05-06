@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import BookForm from '../../components/BookForm.jsx'
 import ErrorMessage from '../../components/ErrorMessage.jsx'
 import Loading from '../../components/Loading.jsx'
@@ -9,36 +9,30 @@ import authorService from '../../services/authorService.js'
 import bookService from '../../services/bookService.js'
 
 function BookEditPage() {
-  const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
   const bookId = useMemo(() => getRouteParams('/books/:id/edit')?.id, [])
   const loadPageData = useCallback(async () => {
-    const [book, authors] = await Promise.all([bookService.getById(bookId), authorService.getAll()])
-    const selectedAuthor = authors.find((author) => author.name === book.authorName)
+    const [bookRes, authorsRes] = await Promise.all([bookService.getById(bookId), authorService.getAll(0, 1000)])
 
     return {
-      book,
-      authors,
-      authorId: selectedAuthor?.id ? String(selectedAuthor.id) : '',
+      book: bookRes.data,
+      authors: authorsRes.data,
     }
   }, [bookId])
   const { data, loading, error } = useFetch(loadPageData)
+  const initialValues = useMemo(
+    () => ({
+      name: data?.book?.name ?? '',
+      authorId: data?.book?.authorId ?? '',
+    }),
+    [data],
+  )
 
   async function onSubmit(formValues) {
-    setSubmitting(true)
-    setSubmitError('')
-
-    try {
-      await bookService.update(bookId, {
-        name: formValues.name.trim(),
-        authorId: Number(formValues.authorId),
-      })
-      navigate('/books')
-    } catch (submitErrorValue) {
-      setSubmitError(submitErrorValue.message || 'Could not update book.')
-    } finally {
-      setSubmitting(false)
-    }
+    await bookService.update(bookId, {
+      name: formValues.name.trim(),
+      authorId: Number(formValues.authorId),
+    })
+    navigate('/books')
   }
 
   return (
@@ -52,11 +46,9 @@ function BookEditPage() {
           authors={data?.authors ?? []}
           disabled={(data?.authors ?? []).length === 0}
           emptyMessage={(data?.authors ?? []).length === 0 ? 'Create an author first before updating a book.' : ''}
-          initialValues={{ name: data?.book?.name ?? '', authorId: data?.authorId ?? '' }}
+          initialValues={initialValues}
           onSubmit={onSubmit}
-          submitError={submitError}
           submitLabel="Update"
-          submitting={submitting}
         />
       )}
     </section>

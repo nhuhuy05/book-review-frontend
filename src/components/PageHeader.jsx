@@ -1,3 +1,4 @@
+import './PageHeader.css';
 function PageHeader({ title }) {
   const segments = title.split('>').map((segment) => segment.trim()).filter(Boolean)
 

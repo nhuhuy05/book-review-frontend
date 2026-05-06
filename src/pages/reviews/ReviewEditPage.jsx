@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import ErrorMessage from '../../components/ErrorMessage.jsx'
 import Loading from '../../components/Loading.jsx'
 import PageHeader from '../../components/PageHeader.jsx'
@@ -9,36 +9,30 @@ import bookService from '../../services/bookService.js'
 import reviewService from '../../services/reviewService.js'
 
 function ReviewEditPage() {
-  const [submitError, setSubmitError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
   const reviewId = useMemo(() => getRouteParams('/reviews/:id/edit')?.id, [])
   const loadPageData = useCallback(async () => {
-    const [review, books] = await Promise.all([reviewService.getById(reviewId), bookService.getAll()])
-    const selectedBook = books.find((book) => book.name === review.bookName)
+    const [reviewRes, booksRes] = await Promise.all([reviewService.getById(reviewId), bookService.getAll(0, 1000)])
 
     return {
-      review,
-      books,
-      bookId: selectedBook?.id ? String(selectedBook.id) : '',
+      review: reviewRes.data,
+      books: booksRes.data,
     }
   }, [reviewId])
   const { data, loading, error } = useFetch(loadPageData)
+  const initialValues = useMemo(
+    () => ({
+      bookId: data?.review?.bookId ?? '',
+      review: data?.review?.review ?? '',
+    }),
+    [data],
+  )
 
   async function onSubmit(formValues) {
-    setSubmitting(true)
-    setSubmitError('')
-
-    try {
-      await reviewService.update(reviewId, {
-        bookId: Number(formValues.bookId),
-        review: formValues.review.trim(),
-      })
-      navigate('/reviews')
-    } catch (submitErrorValue) {
-      setSubmitError(submitErrorValue.message || 'Could not update review.')
-    } finally {
-      setSubmitting(false)
-    }
+    await reviewService.update(reviewId, {
+      bookId: Number(formValues.bookId),
+      review: formValues.review.trim(),
+    })
+    navigate('/reviews')
   }
 
   return (
@@ -52,11 +46,9 @@ function ReviewEditPage() {
           books={data?.books ?? []}
           disabled={(data?.books ?? []).length === 0}
           emptyMessage={(data?.books ?? []).length === 0 ? 'Create a book first before updating a review.' : ''}
-          initialValues={{ bookId: data?.bookId ?? '', review: data?.review?.review ?? '' }}
+          initialValues={initialValues}
           onSubmit={onSubmit}
-          submitError={submitError}
           submitLabel="Update"
-          submitting={submitting}
         />
       )}
     </section>

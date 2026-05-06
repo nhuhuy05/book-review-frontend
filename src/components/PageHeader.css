@@ -1,0 +1,36 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  height: 100%;
+}
+.page-header {
+  flex-shrink: 0;
+  margin-bottom: var(--sp-2);
+}
+.breadcrumb {
+  margin-bottom: var(--sp-1);
+}
+.breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+}
+.breadcrumb__item:not(:last-child)::after {
+  content: '/';
+  color: var(--text-tertiary);
+}
+.breadcrumb__item--current {
+  color: var(--text-secondary);
+}
